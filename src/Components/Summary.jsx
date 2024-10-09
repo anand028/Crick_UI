@@ -1,16 +1,26 @@
 import React from 'react';
+import axios from 'axios';
 import './Summary.css'; // Import the CSS for Summary
 
 const Summary = ({ formData, prevStep }) => {
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    alert('Registration complete!');
+    try {
+      // Send form data to the backend API, not directly to MongoDB
+      const response = await axios.post('http://localhost:5000/submit', formData);
+
+      // Handle success response
+      console.log(response.data);
+      alert('Registration complete! Backend received the data.');
+    } catch (error) {
+      console.error('There was an error submitting the form', error);
+      alert('There was an error submitting the form');
+    }
   };
 
   return (
     <div className="summary-form-container opacity-95 flex items-center justify-center min-h-screen absolute inset-0 ">
-      <form className="summary-form  p-6 w-60 rounded-lg shadow-md">
+      <form className="summary-form  p-6 w-60 rounded-lg shadow-md" onSubmit={handleSubmit}>
         <h2 className="text-2xl mb-4">Summary</h2>
         <p className="mb-2"><strong>Name:</strong> {formData.name}</p>
         <p className="mb-2"><strong>Age:</strong> {formData.age}</p>
@@ -25,9 +35,7 @@ const Summary = ({ formData, prevStep }) => {
             Back
           </button>
           <button
-            type="submit"
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             Submit
           </button>
